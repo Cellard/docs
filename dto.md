@@ -65,6 +65,13 @@ class UserRequest extends FormRequest implements UserData
 }
 ```
 
+> Тут справедливо будет отметить, 
+> что DTO не должен обладать собственной бизнес-логикой. 
+> И совмещение функций запроса и DTO в одном классе — не по канону.
+> Но я пока ничего дурного в этом не нашел.
+> Если не хотите портить себе карму, можете реализовать в запросе метод `dto(): UserData`
+> и пользоваться его результатами. Вот это будет по канону.
+
 Как можно увидеть, наш запрос стал очень строго типизирован. 
 Если какие-то данные не будут соответствовать контракту, приложение упадет с ошибкой еще до попытки 
 записать неполные или некорректные данные в базу данных!
@@ -76,22 +83,22 @@ namespace App\Actions;
 
 class HandlesUsers {
     
-    public function update(User $user, UserData $data): User 
+    public function update(User $user, UserData $dto): User 
     {
-        $user->name = $data->getName();
-        $user->email = $data->getEmail();
-        $user->enabled = $data->getEnabled();
-        $user->role = $data->getRole();
-        $user->birthday = $data->getBirthday();
+        $user->name = $dto->getName();
+        $user->email = $dto->getEmail();
+        $user->enabled = $dto->getEnabled();
+        $user->role = $dto->getRole();
+        $user->birthday = $dto->getBirthday();
         
         $user->save();
         
         return $user;
     }
     
-    public function create(UserData $data): User 
+    public function create(UserData $dto): User 
     {
-        return $this->update(new User, $data);
+        return $this->update(new User, $dto);
     }
 }
 ```
@@ -125,14 +132,14 @@ namespace App\Builders;
 
 class UserBuilder extends Builder {
     
-    public function filter(FilterUsers $filter): static 
+    public function filterBy(FilterUsers $dto): static 
     {
         return $this
-            ->when($filter->filterByName(), fn(self $builder, string $name) => $builder
+            ->when($dto->filterByName(), fn(self $builder, string $name) => $builder
                 ->where('name', 'like', "%$name%"))
-            ->when($filter->filterByEmail(), fn(self $builder, string $email) => $builder
+            ->when($dto->filterByEmail(), fn(self $builder, string $email) => $builder
                 ->where('email', 'like', "$email%"))
-            ->when($filter->filterByRole(), fn(self $builder, RoleEnum $role) => $builder
+            ->when($dto->filterByRole(), fn(self $builder, RoleEnum $role) => $builder
                 ->where('role', $role));
     } 
 }
@@ -148,7 +155,7 @@ class UserController
     public function index(IndexRequest $request) 
     {
         return User::query()
-            ->filter($request)
+            ->filterBy($request)
             ->paginate();
     }
 }

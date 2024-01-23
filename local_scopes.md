@@ -60,8 +60,6 @@ class UserBuilder extends Builder {
 Вручную добавим в модель методы и объявим их статические аксессоры в phpdoc:
 
 ```php
-<?php
- 
 namespace App\Models;
  
 use App\Builders\UserBuilder;
@@ -95,7 +93,6 @@ class User extends Model
 Теперь наш `IDE` всё видит, всё понимает, всё подсказывает:
 
 ```php
-
 $user = User::query()
     ->find(1); // IDE понимает, что $user — это экземпляр User
 
@@ -117,8 +114,6 @@ $users // IDE подскажет методы
 С учетом вышесказанного мы будем размечать и отношения между моделями.
 
 ```php
-<?php
- 
 namespace App\Models;
 
 use App\Builders\PostBuilder;
