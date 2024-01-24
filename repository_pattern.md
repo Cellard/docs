@@ -34,7 +34,7 @@ class HandlesUsers {
 ```php
 namespace App\Http\Controllers;
 
-class UserController
+class UserController extends Controller
 {
     public function __construct(public HandlesUsers $users) {
         //

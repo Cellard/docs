@@ -176,8 +176,8 @@ class UserBuilder extends Builder {
 ```php
 namespace App\Http\Controllers;
 
-class UserController
-{   
+class UserController extends Controller
+{    
     public function index(IndexRequest $request) 
     {
         return User::query()

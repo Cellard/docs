@@ -102,7 +102,7 @@ class HandlesComments {
 ```php
 namespace App\Http\Controllers;
 
-abstract class CommentsController
+abstract class CommentsController extends Controller
 {
     public function __construct(public HandlesComments $comments) 
     {
