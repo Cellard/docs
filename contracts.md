@@ -18,7 +18,7 @@ namespace App\Models\Contracts;
 /**
  * Model has comments.
  * 
- * @property-read CommentCollection|Comment[] $comments 
+ * @property-read CommentCollection $comments 
  */
 interface Commentable 
 {

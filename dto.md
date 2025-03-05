@@ -27,6 +27,17 @@ use App\Dto\UserData;
 
 class UserRequest extends FormRequest implements UserData
 {
+    public function rules(): array 
+    {
+        return [
+            'name'     => 'required',
+            'email'    => 'required|unique:users,email',
+            'enabled'  => 'required|boolean',
+            'birthday' => 'date',
+            'role'     => Rule::enum(RoleEnum::class),
+        ];   
+    }
+    
     public function getName(): string
     {
         return $this->input('name');
@@ -50,17 +61,6 @@ class UserRequest extends FormRequest implements UserData
     public function getBirthday(): ?Carbon
     {
         return $this->date('birthday');
-    }
-    
-    public function rules(): array 
-    {
-        return [
-            'name'     => 'required',
-            'email'    => 'required|unique:users,email',
-            'enabled'  => 'required|boolean',
-            'birthday' => 'date',
-            'role'     => Rule::enum(RoleEnum::class),
-        ];   
     }
 }
 ```

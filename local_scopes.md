@@ -11,22 +11,11 @@
 Вместо Local Scope следует использовать Custom Builders — 
 по аналогии с [Custom Collections](https://laravel.com/docs/10.x/eloquent-collections#custom-collections).
 
-Используем команды для создания классов:
-
-    composer require codewiser/laravel-make
-
-    php artisan make:collection UserCollection
-    php artisan make:builder UserBuilder
-
-Это создаст класс коллекции (с типизированным phpdoc-описанием):
-
 ```php
 namespace App\Collection;
 
 /**
- * @method User first(callable $callback = null, $default = null)
- * 
- * etc
+ * @extends Collection<int,User>
  */
 class UserCollection extends Collection {
     
@@ -43,10 +32,7 @@ class UserCollection extends Collection {
 namespace App\Builders;
 
 /**
- * @method User first($columns = ['*'])
- * @method UserCollection get($columns = ['*'])
- * 
- * etc
+ * @extends Builder<User>
  */
 class UserBuilder extends Builder {
     
@@ -62,31 +48,18 @@ class UserBuilder extends Builder {
 ```php
 namespace App\Models;
  
-use App\Builders\UserBuilder;
-use App\Collections\UserCollection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @method static UserBuilder query()
  * @method static UserCollection all($columns = ['*'])
  */
+ #[CollectedBy(UserCollection::class)]
 class User extends Model
 {
-    /**
-     * Create a new Eloquent Collection instance.
-     */
-    public function newCollection(array $models = []): UserCollection
-    {
-        return new UserCollection($models);
-    }
+    use HasBuilder, HasCollection;
     
-    /**
-     * Create a new Eloquent Builder instance.
-     */
-    public function newEloquentBuilder($query): UserBuilder
-    {
-        return new UserBuilder($query);
-    }
+    protected static string $builder = UserBuilder::class;
 }
 ```
 
@@ -127,7 +100,7 @@ use App\Collections\PostCollection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property-read PostCollection|Post[] $posts User's posts.
+ * @property-read PostCollection $posts User's posts.
  */
 class User extends Model
 {
